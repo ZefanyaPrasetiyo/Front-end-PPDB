@@ -107,7 +107,7 @@ export default function SignUpForm() {
             >
               <option value="">Pilih jenis kelamin</option>
               <option value="laki-laki">Laki-laki</option>
-              <option value="perempuan">Perempuan</option>
+              <option value="Perempuan">Perempuan</option>
             </select>
           </div>
 

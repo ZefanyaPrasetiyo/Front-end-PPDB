@@ -1,9 +1,15 @@
-import mysql from 'mysql2/promise';
+import mysql from "mysql2/promise";
 
-const connection = await mysql.createConnection({
-    host    : 'localhost',
-    user    : 'root',
-    database: 'db_ujiLevel'
-})
+let connection: any = null;
 
-export default connection
+export async function getConnection() {
+  if (!connection) {
+    connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      database: "db_ujiLevel",
+    });
+  }
+
+  return connection;
+}
