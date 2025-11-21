@@ -51,120 +51,156 @@ export default function SignUpForm() {
   };
 
   return (
-    <div className="flex flex-col w-full h-screen overflow-y-auto no-scrollbar bg-white dark:bg-dark-900">
-      <div className="w-full px-6 pt-6 mb-5">
-        <Link
-          href="/"
-          className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-        >
-          <ChevronLeftIcon />
-          Back to dashboard
-        </Link>
-      </div>
+  <div className="min-h-screen w-full bg-gray-50 dark:bg-dark-900 py-8 px-4 flex justify-center overflow-y-auto">
+    <div className="w-full max-w-2xl bg-white dark:bg-dark-800 shadow-lg rounded-2xl p-6 sm:p-8 space-y-6">
 
-      <div className="w-full flex-1 px-6 pb-20">
-        <form onSubmit={handleSubmit} className="w-full max-w-full space-y-5">
-          <div>
-            <Label>Nama Lengkap *</Label>
-            <Input type="text" name="nama" onChange={handleChange} placeholder="Masukkan nama lengkap" />
+      <Link
+        href="/"
+        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+      >
+        <ChevronLeftIcon className="w-4 h-4" />
+        Back to dashboard
+      </Link>
+
+      <h1 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+        Formulir Pendaftaran PPDB
+      </h1>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+
+        {/* --- Informasi Siswa --- */}
+        <div className="space-y-4">
+          <div className="text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wide mb-1">
+            Informasi Siswa
           </div>
 
-          <div>
-            <Label>Email *</Label>
-            <Input type="email" name="email" onChange={handleChange} placeholder="Masukkan email" />
+          <div className="grid grid-cols-1 gap-4">
+            <div>
+              <Label>Nama Lengkap *</Label>
+              <Input name="nama" type="text" onChange={handleChange} placeholder="Masukkan nama lengkap" />
+            </div>
+
+            <div>
+              <Label>Email *</Label>
+              <Input name="email" type="email" onChange={handleChange} placeholder="Masukkan email" />
+            </div>
+
+            <div>
+              <Label>Password *</Label>
+              <Input name="password" type="password" onChange={handleChange} placeholder="Masukkan password" />
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label>NISN *</Label>
-              <Input type="text" name="nisn" onChange={handleChange} placeholder="Masukkan NISN" />
+              <Input name="nisn" type="text" onChange={handleChange} placeholder="Masukkan NISN" />
             </div>
 
             <div>
               <Label>Asal Sekolah *</Label>
-              <Input type="text" name="asal_sekolah" onChange={handleChange} placeholder="Masukkan asal sekolah" />
+              <Input name="asal_sekolah" type="text" onChange={handleChange} placeholder="Masukkan asal sekolah" />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label>Tempat Lahir *</Label>
-              <Input type="text" name="tempat" onChange={handleChange} placeholder="Masukkan tempat lahir" />
+              <Input name="tempat" type="text" onChange={handleChange} placeholder="Masukkan tempat lahir" />
             </div>
 
             <div>
               <Label>Tanggal Lahir *</Label>
-              <Input type="date" name="tanggal_lahir" onChange={handleChange} />
+              <Input name="tanggal_lahir" type="date" onChange={handleChange} />
             </div>
           </div>
 
           <div>
-            <Label>Jenis Kelamin</Label>
+            <Label>Jenis Kelamin *</Label>
             <select
               name="jenis_kelamin"
-              className="w-full px-3 py-3 border rounded-lg bg-white dark:bg-dark-800"
+              className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-dark-700 border-gray-300 dark:border-dark-600 focus:ring-2 focus:ring-blue-500 outline-none"
               onChange={handleChange}
             >
               <option value="">Pilih jenis kelamin</option>
-              <option value="laki-laki">Laki-laki</option>
+              <option value="Laki-laki">Laki-laki</option>
               <option value="Perempuan">Perempuan</option>
             </select>
           </div>
 
           <div>
             <Label>Agama *</Label>
-            <Input type="text" name="agama" onChange={handleChange} placeholder="Masukkan agama" />
+            <Input name="agama" type="text" onChange={handleChange} placeholder="Masukkan agama" />
           </div>
 
           <div>
-            <Label>Alamat Lengkap</Label>
+            <Label>Alamat Lengkap *</Label>
             <textarea
               name="alamat"
-              className="w-full px-3 py-3 border rounded-lg h-24 bg-white dark:bg-dark-800"
               onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-lg h-24 bg-white dark:bg-dark-700 border-gray-300 dark:border-dark-600 focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Masukkan alamat lengkap"
             ></textarea>
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        {/* --- Informasi Orang Tua --- */}
+        <div className="space-y-4">
+          <div className="text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wide mb-1">
+            Informasi Orang Tua / Wali
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label>Nama Orang Tua / Wali</Label>
-              <Input type="text" name="nama_orang_tua" onChange={handleChange} placeholder="Masukkan nama orang tua" />
+              <Label>Nama Orang Tua *</Label>
+              <Input name="nama_orang_tua" type="text" onChange={handleChange} placeholder="Masukkan nama orang tua" />
             </div>
 
             <div>
-              <Label>Pekerjaan Orang Tua</Label>
-              <Input type="text" name="pekerjaan_orang_tua" onChange={handleChange} placeholder="Masukkan pekerjaan" />
+              <Label>Pekerjaan *</Label>
+              <Input name="pekerjaan_orang_tua" type="text" onChange={handleChange} placeholder="Masukkan pekerjaan" />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label>No HP Orang Tua</Label>
-              <Input type="text" name="no_hp_ortu" onChange={handleChange} placeholder="Contoh: 08123456789" />
+              <Label>No HP Orang Tua *</Label>
+              <Input name="no_hp_ortu" type="text" onChange={handleChange} placeholder="081xxxx" />
             </div>
 
             <div>
-              <Label>No HP Calon Siswa</Label>
-              <Input type="text" name="no_hp_casis" onChange={handleChange} placeholder="Contoh: 08123456789" />
+              <Label>No HP Calon Siswa *</Label>
+              <Input name="no_hp_casis" type="text" onChange={handleChange} placeholder="081xxxx" />
             </div>
           </div>
+        </div>
 
-          <div>
-            <Label>Bukti Pembayaran</Label>
-            <Input type="file" name="bukti_pembayaran" onChange={(e) => setBuktiPembayaran(e.target.files?.[0] ?? null)} />
-          </div>
+        {/* --- Upload Bukti Pembayaran --- */}
+        <div className="space-y-2">
+          <Label>Bukti Pembayaran *</Label>
+          <Input
+            type="file"
+            name="bukti_pembayaran"
+            onChange={(e) => setBuktiPembayaran(e.target.files?.[0] ?? null)}
+          />
+        </div>
 
-          <div className="flex items-center gap-3">
-            <Checkbox className="w-5 h-5" checked={isChecked} onChange={setIsChecked} />
-            <p className="text-gray-500 dark:text-gray-400">Dengan mendaftar, kamu setuju dengan kebijakan PPDB.</p>
-          </div>
+        {/* --- Agreement --- */}
+        <div className="flex items-center gap-3">
+          <Checkbox className="w-5 h-5" checked={isChecked} onChange={setIsChecked} />
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            Dengan mendaftar, kamu setuju dengan kebijakan PPDB.
+          </p>
+        </div>
 
-          <button className="w-full px-4 py-3 text-sm font-medium text-white rounded-lg bg-[#173E67] hover:bg-[#0F2F4F]">
-            Daftar Sekarang
-          </button>
-        </form>
-      </div>
+        {/* --- Submit Button --- */}
+        <button className="w-full py-3 text-sm font-medium text-white rounded-lg bg-[#173E67] hover:bg-[#0F2F4F] transition">
+          Daftar Sekarang
+        </button>
+
+      </form>
     </div>
-  );
+  </div>
+);
+
 }

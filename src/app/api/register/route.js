@@ -2,11 +2,15 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { getConnection } from "@/lib/db";
 import { existsSync } from "fs";
+import bcrypt from "bcryptjs";
 
-export async function POST(req) {
+export async function POST(req ) {
   try {
     const form = await req.formData();
     const conn = await getConnection();
+    const hash = bcrypt.hashSync(form.get("password"));
+    
+
     let savedPath = null;
     const file = form.get("bukti_pembayaran");
     if (file && file.name) {
@@ -30,15 +34,16 @@ export async function POST(req) {
     delete data.bukti_pembayaran;
     const sql = `
       INSERT INTO users (
-        nama, email, nisn, asal_sekolah, tempat, tanggal_lahir,
+        nama, email, password, nisn, asal_sekolah, tempat, tanggal_lahir,
         jenis_kelamin, agama, alamat, nama_orang_tua, pekerjaan_orang_tua,
         no_hp_ortu, no_hp_casis, bukti_pembayaran
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const values = [
       data.nama,
       data.email,
+      hash,
       data.nisn,
       data.asal_sekolah,
       data.tempat,

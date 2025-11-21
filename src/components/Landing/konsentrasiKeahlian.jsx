@@ -49,13 +49,20 @@ export default function Jurusan() {
       deskripsi:
         "Menggabungkan visual, audio, animasi, hingga video untuk menciptakan karya digital kreatif.",
     },
+    {
+      singkatan: "DKV",
+      nama: "Desain Komunikasi Visual",
+      logo: "/images/konsentrasiKeahlian/dkv.png",
+      deskripsi:
+        "bidang studi yang mengajarkan cara menyampaikan pesan melalui media visual yang efektif, informatif, dan komunikatif.",
+    },
   ];
 
   return (
     <>
       <div
         data-aos="fade-up"
-        className="text-center max-w-3xl mx-auto mb-12"
+        className="text-center max-w-3xl mx-auto mb-16"
       >
         <h2 className="text-3xl font-bold text-gray-900">
           Konsentrasi Keahlian
@@ -65,7 +72,7 @@ export default function Jurusan() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 px-6 lg:px-20">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8 px-6 lg:px-20">
         {dataJurusan.map((item, index) => (
           <div
             key={index}
@@ -81,8 +88,8 @@ export default function Jurusan() {
               <Image
                 src={item.logo}
                 alt={item.singkatan}
-                width={120}
-                height={120}
+                width={100}
+                height={100}
                 className="
                   object-contain transition-all duration-500
                   group-hover:scale-110 group-hover:opacity-40
@@ -108,7 +115,7 @@ export default function Jurusan() {
 
               <p
                 className="
-                  opacity-0 text-sm text-center leading-relaxed
+                  opacity-0 text-xs text-center leading-relaxed
                   transition-all duration-500 delay-75
                   group-hover:opacity-100
                 "

@@ -1,13 +1,11 @@
 import React, { ReactNode } from "react";
 
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   size?: "sm" | "md";
   variant?: "primary" | "outline";
   startIcon?: ReactNode;
   endIcon?: ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
   className?: string;
 }
 
@@ -17,9 +15,9 @@ const Button: React.FC<ButtonProps> = ({
   variant = "primary",
   startIcon,
   endIcon,
-  onClick,
   className = "",
   disabled = false,
+  ...props // ← penting
 }) => {
   const sizeClasses = {
     sm: "px-4 py-3 text-sm",
@@ -35,13 +33,13 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      className={`inline-flex items-center justify-center font-medium gap-2 rounded-lg transition ${className} ${
+      className={`inline-flex items-center justify-center font-medium gap-2 rounded-lg transition ${
         sizeClasses[size]
       } ${variantClasses[variant]} ${
         disabled ? "cursor-not-allowed opacity-50" : ""
-      }`}
-      onClick={onClick}
+      } ${className}`}
       disabled={disabled}
+      {...props} // ← sekarang type="submit" bisa
     >
       {startIcon && <span className="flex items-center">{startIcon}</span>}
       {children}
