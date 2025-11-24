@@ -6,7 +6,7 @@ import { z } from "zod";
 
 const credentialsSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6),
+  password: z.string().min(4),
 });
 
 const handler = NextAuth({
@@ -88,9 +88,9 @@ const handler = NextAuth({
     },
   },
 
-  pages: {
-    signIn: "/Login",
-  },
+  // pages: {
+  //   signIn: "/login",
+  // },
 });
 
 export { handler as GET, handler as POST };

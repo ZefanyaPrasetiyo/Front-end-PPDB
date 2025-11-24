@@ -69,13 +69,13 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4">
             <Link
-              href="/Login"
+              href="/login"
               className="rounded-md bg-[#173E67] px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-[#13314f] transition"
             >
               Login
             </Link>
             <Link
-              href="/Register"
+              href="/register"
               className="hidden sm:block rounded-md bg-gray-100 px-5 py-2.5 text-sm font-medium text-[#173E67] hover:bg-gray-200 transition"
             >
               Ayo Mulai
@@ -147,14 +147,14 @@ export default function Navbar() {
           <Link href="#" className="hover:text-[#173E67]">FAQ</Link>
 
           <Link
-            href="#"
+            href="/login"
             className="bg-[#173E67] text-white text-center py-2 rounded-md shadow hover:bg-[#13314f] transition"
           >
             Login
           </Link>
 
           <Link
-            href="#"
+            href="/register"
             className="bg-gray-100 text-center py-2 rounded-md text-[#173E67] hover:bg-gray-200 transition"
           >
             Ayo Mulai

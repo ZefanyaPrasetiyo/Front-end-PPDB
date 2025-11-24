@@ -1,23 +1,35 @@
-import Navbar from "../components/Landing/navbarLanding"
-import Hero from "../components/Landing/heroSectionLanding"
-import Features from "../components/Landing/InformasiLanding"
-import Jurusan from "../components/Landing/konsentrasiKeahlian"
-import TrustedSection from "../components/Landing/partner"
-import FaqAccordion from "../components/Landing/Faq"
-import Cta from "../components/Landing/Cta"
-import Footer from "../components/Landing/footer"
+"use client"; // wajib kalau pakai hook useSession di Next.js 13+
+
+import { useSession } from "next-auth/react";
+import Navbar from "../components/Landing/navbarLanding";
+import Hero from "../components/Landing/heroSectionLanding";
+import Features from "../components/Landing/InformasiLanding";
+import Jurusan from "../components/Landing/konsentrasiKeahlian";
+import TrustedSection from "../components/Landing/partner";
+import FaqAccordion from "../components/Landing/Faq";
+import Cta from "../components/Landing/Cta";
+import Footer from "../components/Landing/footer";
 
 export default function Landing() {
+  const { data: session, status } = useSession();
+
+  // Bisa cek loading atau tidak ada session
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  console.log("Session user:", session);
+
   return (
     <>
-    <Navbar/>
-    <Hero/>
-    <Features/>
-    <Jurusan/>
-    <TrustedSection/>
-    <FaqAccordion/>
-    <Cta/>
-    <Footer/>
+      <Navbar />
+      <Hero />
+      <Features />
+      <Jurusan />
+      <TrustedSection />
+      <FaqAccordion />
+      <Cta />
+      <Footer />
     </>
   );
 }
