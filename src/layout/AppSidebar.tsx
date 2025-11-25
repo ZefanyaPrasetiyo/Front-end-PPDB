@@ -31,12 +31,35 @@ type NavItem = {
 };
 
 const navMain: NavItem[] = [
-  { icon: <UserCircleIcon />, name: "Panduan", path: "/user/panduan", roles: ["calon_siswa"] },
-  { icon: <UserCircleIcon />, name: "PPDB", path: "/user/ppdb", roles: ["calon_siswa"] },
-  { icon: <UserCircleIcon />, name: "Jurusan", path: "/jurusan", roles: ["calon_siswa"] },
-  { icon: <GridIcon />, name: "Dashboard", path: "/profile", roles: ["admin"] },
-  { icon: <TableIcon />, name: "Table User", path: "/profile", roles: ["admin"] },
-  { icon: <UserCircleIcon />, name: "User Profile", path: "/profile", roles: ["calon_siswa", "tu", "admin"] },
+  { icon: <UserCircleIcon />, 
+    name: "Beranda", 
+    path: "/user", 
+    roles: ["calon_siswa"] },
+  { 
+    icon: <UserCircleIcon />, 
+    name: "PPDB", 
+    path: "/user/ppdb", 
+    roles: ["calon_siswa"] },
+  { 
+    icon: <UserCircleIcon />, 
+    name: "Panduan", 
+    path: "/user/panduan", 
+    roles: ["calon_siswa"] },
+  { 
+    icon: <GridIcon />, 
+    name: "Dashboard", 
+    path: "/profile", 
+    roles: ["admin"] },
+  { 
+    icon: <TableIcon />, 
+    name: "Table User", path: 
+    "/profile", 
+    roles: ["admin"] },
+  { 
+    icon: <UserCircleIcon />, 
+    name: "User Profile", 
+    path: "/profile", 
+    roles: ["calon_siswa", "tu", "admin"] },
   {
     icon: <GridIcon />,
     name: "Dashboard",

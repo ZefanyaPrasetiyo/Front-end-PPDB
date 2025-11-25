@@ -69,7 +69,7 @@ export default function SignInSplit() {
           <form onSubmit={handleLogin} className="space-y-4">
             {/* Email */}
             <div>
-              <Label className="text-sm" style={{ color: PRIMARY_COLOR }}>
+              <Label className="text-sm" style={{ color: PRIMARY_COLOR}}>
                 Email
               </Label>
               <Input

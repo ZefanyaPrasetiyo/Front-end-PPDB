@@ -21,6 +21,7 @@ export default function Jurusan() {
 
   return (
     <>
+    <div className="">
       <div className="text-center max-w-3xl mx-auto mb-16">
         <h2 className="text-3xl font-bold text-gray-900">Konsentrasi Keahlian</h2>
         <p className="mt-4 text-gray-700 text-lg">
@@ -60,6 +61,7 @@ export default function Jurusan() {
           </div>
         ))}
       </div>
+            </div>
     </>
   );
 }

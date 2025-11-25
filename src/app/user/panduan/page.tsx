@@ -1,212 +1,207 @@
 "use client";
 
-export default function PeriodePendaftaran() {
+import React, { useState, useRef } from "react";
+import Image from "next/image";
+
+// Asset from uploaded file (local path provided)
+const ASSET_URL = "/mnt/data/87f770f8-87fb-4419-90dc-a56c4dca08f0.png";
+const PRIMARY = "#4A88C7";
+const ACCENT = "#173E67";
+
+type Step = {
+  id: number;
+  title: string;
+  subtitle?: string;
+  details: string[];
+  optional?: boolean;
+};
+
+const STEPS: Step[] = [
+  {
+    id: 1,
+    title: "Buat Akun",
+    subtitle: "Email atau NISN",
+    details: [
+      "Daftar menggunakan email aktif atau NISN.",
+      "Catat username & password dengan aman.",
+    ],
+  },
+  {
+    id: 2,
+    title: "Lengkapi Data Diri",
+    subtitle: "Identitas & Kontak",
+    details: [
+      "Isi nama lengkap, alamat, dan data sekolah asal.",
+      "Pastikan NISN dan tanggal lahir sesuai dokumen resmi.",
+    ],
+  },
+  {
+    id: 3,
+    title: "Unggah Dokumen",
+    subtitle: "Ijazah, KK, Akta, Foto",
+    details: [
+      "Format: JPG/PNG/PDF — Maks 2MB per file.",
+      "Periksa kembali nama pada semua dokumen.",
+    ],
+  },
+  {
+    id: 4,
+    title: "Pilih Jurusan & Jalur",
+    subtitle: "Zonasi / Prestasi / Afirmasi",
+    details: [
+      "Pilih jurusan yang sesuai minat dan kemampuan.",
+      "Pilih jalur pendaftaran sesuai ketentuan sekolah.",
+    ],
+  },
+  {
+    id: 5,
+    title: "Pembayaran (Jika Perlu)",
+    subtitle: "Lunas atau Cicilan",
+    details: [
+      "Unggah bukti pembayaran jika diminta.",
+      "Simpan nomor transaksi untuk verifikasi.",
+    ],
+  },
+  {
+    id: 6,
+    title: "Verifikasi & Pengumuman",
+    subtitle: "Tunggu hasil verifikasi",
+    details: [
+      "Petugas akan memverifikasi berkas yang diunggah.",
+      "Pantau pengumuman di dashboard dan email.",
+    ],
+  },
+];
+
+export default function PanduanPPDBModern() {
+  const [openId, setOpenId] = useState<number | null>(1);
+  const [current, setCurrent] = useState(1);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const total = STEPS.length;
+
+  function toggle(id: number) {
+    setOpenId((prev) => (prev === id ? null : id));
+  }
+
+  function next() {
+    setCurrent((c) => Math.min(c + 1, total));
+    setOpenId((prev) => (prev && prev < total ? prev + 1 : prev));
+    scrollToStep(current + 1);
+  }
+
+  function prev() {
+    setCurrent((c) => Math.max(c - 1, 1));
+    setOpenId((prev) => (prev && prev > 1 ? prev - 1 : prev));
+    scrollToStep(current - 1);
+  }
+
+  function scrollToStep(stepIndex: number) {
+    const el = containerRef.current?.querySelector(`#step-${stepIndex}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
   return (
-    <div className="w-full py-20 bg-gradient-to-b from-[#f4f7fb] to-[#e9eef6]">
-
-      <div className="max-w-4xl mx-auto text-center mb-16 px-6">
-        <h2 className="text-3xl md:text-4xl font-bold text-blue-900 tracking-tight mb-4">
-          Periode Pendaftaran
-        </h2>
-        <p className="text-lg text-blue-700/80 max-w-2xl mx-auto">
-          Pilih periode pendaftaran yang sesuai dan ketahui rincian biaya lengkapnya
-        </p>
-      </div>
-
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 px-6">
-
-        {/* card gelombang 1 */}
-        <div className="bg-white rounded-2xl p-8 shadow-lg border border-blue-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300 flex flex-col h-fit">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold text-blue-900">
-              Gelombang 1
-            </h3>
-            <p className="mt-2 text-blue-700 font-medium">
-              01 Oktober 2025 — 28 Februari 2026
-            </p>
-          </div>
-
-          <div className="space-y-4 flex-1">
-            <h4 className="font-semibold text-blue-900 text-lg border-b border-blue-100 pb-2">
-              Biaya Pendaftaran:
-            </h4>
-            
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-blue-800">Gedung Sarpras Sekolah:</span>
-                <span className="font-semibold text-blue-900">Rp 1.800.000</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-blue-800">Dana Praktek Siswa:</span>
-                <span className="font-semibold text-blue-900">Rp 700.000</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-blue-800">Administrasi & Kegiatan:</span>
-                <span className="font-semibold text-blue-900">Rp 800.000</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-blue-800">Seragam Kejuruan & Olahraga:</span>
-                <span className="font-semibold text-blue-900">Rp 400.000</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-blue-800">Iuran Pendidikan Juli 2026:</span>
-                <span className="font-semibold text-blue-900">Rp 600.000</span>
-              </div>
+    <div className="max-w-4xl mx-auto p-6">
+      <div className="rounded-2xl border bg-white shadow-xl overflow-hidden" style={{ borderColor: PRIMARY }}>
+        {/* Header */}
+        <div className="flex items-center gap-4 p-6 border-b" style={{ borderColor: "rgba(0,0,0,0.04)" }}>
+          <div className="flex items-center gap-3">
+            <div className="rounded-lg overflow-hidden w-16 h-16 shadow-md">
+              <Image src={ASSET_URL} alt="logo" width={64} height={64} className="object-cover" />
             </div>
-
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex justify-between items-center font-bold text-blue-900">
-                <span>Total Biaya Pendaftaran:</span>
-                <span>Rp 4.300.000</span>
-              </div>
+            <div>
+              <h2 className="text-2xl font-bold" style={{ color: ACCENT }}>Panduan PPDB — Modern & Interaktif</h2>
+              <p className="text-sm text-gray-600">Ikuti langkah mudah untuk menyelesaikan pendaftaran.</p>
             </div>
-
-            {/* biaya luar */}
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <h5 className="font-semibold text-blue-800 text-sm mb-3">
-                Pembelian Terpisah di Koperasi TB:
-              </h5>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between items-center">
-                  <span className="text-blue-700">Kemeja Biru:</span>
-                  <span className="font-semibold text-blue-800">Rp 150.000</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-blue-700">Seragam Jurusan:</span>
-                  <span className="font-semibold text-blue-800">Rp 150.000</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-blue-700">Dasi & Atribut:</span>
-                  <span className="font-semibold text-blue-800">Rp 150.000</span>
-                </div>
-              </div>
-              <div className="mt-3 pt-3 border-t border-blue-300">
-                <div className="flex justify-between items-center font-semibold text-blue-800">
-                  <span>Total Seragam Koperasi:</span>
-                  <span>Rp 450.000</span>
-                </div>
-              </div>
-              <p className="text-xs text-blue-600/70 mt-2">
-                *Harga dapat berubah sewaktu-waktu sesuai ketentuan koperasi
-              </p>
-            </div>
-
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex justify-between items-center font-bold text-blue-900 text-lg">
-                <span>Total Keseluruhan:</span>
-                <span>Rp 4.750.000</span>
-              </div>
-              <p className="text-xs text-blue-600/70 mt-1">
-                Biaya pendaftaran + seragam koperasi
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-            <p className="font-semibold text-slate-800 text-sm mb-2">Catatan Pembayaran:</p>
-            <ul className="text-sm text-slate-700 space-y-1">
-              <li>• Minimal pembayaran awal: <span className="font-semibold">Rp 3.000.000</span></li>
-              <li>• Pelunasan hingga akhir Februari 2026</li>
-              <li>• Biaya formulir sebesar Rp 250.000 dan dibayarkan sebelum mengisi form</li>
-              <li>• Pembayaran dapat dilakukan langsung ke Rekening Sekolah BSI No. Rekening 7222352643 a.n PPDB SMK TARUNA BHAKTI</li>
-            </ul>
           </div>
         </div>
-
-        {/* card gelombang 2 */}
-        <div className="bg-white rounded-2xl p-8 shadow-lg border border-blue-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300 flex flex-col h-fit">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold text-blue-900">
-              Gelombang 2
-            </h3>
-            <p className="mt-2 text-blue-700 font-medium">
-              01 Maret 2026 — 09 Juli 2026
-            </p>
-          </div>
-
-          <div className="space-y-4 flex-1">
-            <h4 className="font-semibold text-blue-900 text-lg border-b border-blue-100 pb-2">
-              Biaya Pendaftaran:
-            </h4>
-            
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-blue-800">Gedung Sarpras Sekolah:</span>
-                <span className="font-semibold text-blue-900">Rp 1.950.000</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-blue-800">Dana Praktek Siswa:</span>
-                <span className="font-semibold text-blue-900">Rp 700.000</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-blue-800">Administrasi & Kegiatan:</span>
-                <span className="font-semibold text-blue-900">Rp 800.000</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-blue-800">Seragam Kejuruan & Olahraga:</span>
-                <span className="font-semibold text-blue-900">Rp 400.000</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-blue-800">Iuran Pendidikan Juli 2026:</span>
-                <span className="font-semibold text-blue-900">Rp 600.000</span>
+        {/* Content */}
+        <div className="p-6" ref={containerRef}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Left: Timeline */}
+            <div className="col-span-1">
+              <div className="flex flex-col items-start gap-6">
+                {STEPS.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => { setCurrent(s.id); setOpenId(s.id); scrollToStep(s.id); }}
+                    className={`w-full text-left flex items-center gap-4 p-3 rounded-lg transition-shadow hover:shadow-lg ${current === s.id ? "bg-white" : "bg-white/80"}`}
+                    style={{ border: `1px solid ${current === s.id ? PRIMARY : "transparent"}` }}
+                  >
+                    <div
+                      className="flex items-center justify-center rounded-full w-10 h-10 text-white font-semibold shadow"
+                      style={{ background: current === s.id ? ACCENT : PRIMARY }}
+                    >
+                      {s.id}
+                    </div>
+                    <div>
+                      <div className="font-medium" style={{ color: ACCENT }}>{s.title}</div>
+                      <div className="text-xs text-gray-500">{s.subtitle}</div>
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex justify-between items-center font-bold text-blue-900">
-                <span>Total Biaya Pendaftaran:</span>
-                <span>Rp 4.450.000</span>
+            {/* Middle: Details */}
+            <div className="col-span-2">
+              <div className="space-y-6">
+                {STEPS.map((s) => (
+                  <div key={s.id} id={`step-${s.id}`} className="rounded-xl p-5 border bg-white shadow-sm" style={{ borderColor: PRIMARY }}>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 rounded-lg flex items-center justify-center font-bold text-white" style={{ background: ACCENT }}>{s.id}</div>
+                        <div>
+                          <h3 className="text-lg font-semibold" style={{ color: ACCENT }}>{s.title}</h3>
+                          <p className="text-sm text-gray-500">{s.subtitle}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => toggle(s.id)}
+                          className="px-3 py-2 text-sm rounded-lg border"
+                          style={{ borderColor: "rgba(0,0,0,0.06)" }}
+                        >
+                          {openId === s.id ? "Tutup" : "Rinci"}
+                        </button>
+                        <button
+                          onClick={() => alert('Cetak / Simpan tip untuk langkah: ' + s.title)}
+                          className="px-3 py-2 text-sm rounded-lg text-white"
+                          style={{ background: PRIMARY }}
+                        >
+                          Simpan
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className={`mt-4 transition-all ${openId === s.id ? "max-h-screen" : "max-h-0 overflow-hidden"}`}>
+                      <ul className="space-y-2">
+                        {s.details.map((d, i) => (
+                          <li key={i} className="flex items-start gap-3">
+                            <div className="w-3 h-3 mt-2 rounded-full" style={{ background: PRIMARY }} />
+                            <div className="text-sm text-gray-600">{d}</div>
+                          </li>
+                        ))}
+                      </ul>
+
+                      <div className="mt-4 flex gap-3">
+                        <button onClick={prev} className="px-4 py-2 rounded-lg border" style={{ borderColor: "rgba(0,0,0,0.06)" }}>Sebelumnya</button>
+                        <button onClick={next} className="px-4 py-2 rounded-lg text-white" style={{ background: PRIMARY }}>Berikutnya</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* CTA */}
+                <div className="flex justify-end">
+                  <a href="/user/ppdb" className="px-5 py-3 rounded-2xl font-semibold text-white" style={{ background: ACCENT }}>
+                    Daftar Sekarang
+                  </a>
+                </div>
               </div>
             </div>
-
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <h5 className="font-semibold text-blue-800 text-sm mb-3">
-                Pembelian Terpisah di Koperasi TB:
-              </h5>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between items-center">
-                  <span className="text-blue-700">Kemeja Biru:</span>
-                  <span className="font-semibold text-blue-800">Rp 150.000</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-blue-700">Seragam Jurusan:</span>
-                  <span className="font-semibold text-blue-800">Rp 150.000</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-blue-700">Dasi & Atribut:</span>
-                  <span className="font-semibold text-blue-800">Rp 150.000</span>
-                </div>
-              </div>
-              <div className="mt-3 pt-3 border-t border-blue-300">
-                <div className="flex justify-between items-center font-semibold text-blue-800">
-                  <span>Total Seragam Koperasi:</span>
-                  <span>Rp 450.000</span>
-                </div>
-              </div>
-              <p className="text-xs text-blue-600/70 mt-2">
-                *Harga dapat berubah sewaktu-waktu sesuai ketentuan koperasi
-              </p>
-            </div>
-
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex justify-between items-center font-bold text-blue-900 text-lg">
-                <span>Total Keseluruhan:</span>
-                <span>Rp 4.900.000</span>
-              </div>
-              <p className="text-xs text-blue-600/70 mt-1">
-                Biaya pendaftaran + seragam koperasi
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-            <p className="font-semibold text-slate-800 text-sm mb-2">Catatan Pembayaran:</p>
-            <ul className="text-sm text-slate-700 space-y-1">
-              <li>• Minimal pembayaran awal: <span className="font-semibold">Rp 3.000.000</span></li>
-              <li>• Pelunasan hingga akhir Februari 2026</li>
-              <li>• Biaya formulir sebesar Rp 250.000 dan dibayarkan sebelum mengisi form</li>
-              <li>• Pembayaran dapat dilakukan langsung ke Rekening Sekolah BSI No. Rekening 7222352643 a.n PPDB SMK TARUNA BHAKTI</li>
-            </ul>
           </div>
         </div>
 
