@@ -60,20 +60,23 @@ const navMain: NavItem[] = [
     name: "User Profile", 
     path: "/profile", 
     roles: ["calon_siswa", "tu", "admin"] },
-  {
-    icon: <GridIcon />,
-    name: "Dashboard",
-    subItems: [{ name: "Ecommerce", path: "/", icon: <GridIcon />, roles: ["tu"] }],
-    roles: ["tu"],
+   { 
+    icon: <UserCircleIcon />, 
+    name: "calon siswa", 
+    path: "/staff/calonsiswa", 
+    roles: ["tu"] 
   },
-  {
-    icon: <TableIcon />,
-    name: "Tables",
-    subItems: [
-      { name: "Calon siswa", path: "/basic-tables", icon: <TableIcon /> },
-      { name: "Pembayaran", path: "/basic-tables", icon: <TableIcon /> },
-    ],
-    roles: ["tu"],
+  { 
+    icon: <UserCircleIcon />, 
+    name: "dokumen", 
+    path: "/staff/dokumen-calon-siswa", 
+    roles: ["tu"] 
+  },
+  { 
+    icon: <UserCircleIcon />, 
+    name: "Dashboard", 
+    path: "/staff/datasiswa", 
+    roles: ["tu"] 
   },
 ];
 

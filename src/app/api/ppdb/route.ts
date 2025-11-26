@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
 
     const fileKeys = ["ijazah", "akta", "kk", "foto", "rapor", "sk_nilai"];
 
-    // folder upload
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
