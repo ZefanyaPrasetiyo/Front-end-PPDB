@@ -2,21 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { getConnection } from "@/lib/db";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
+    // SESSION → USER ID
+   const session = await getServerSession(authOptions);
+    const userId = (session?.user as any)?.id;
+
+    if (!userId) {
+      return NextResponse.json({ success: false, error: "User belum login" }, { status: 401 });
+    }
+
+    // FORM DATA
     const form = await req.formData();
 
-    const fields = {
-      nama_lengkap: form.get("nama_lengkap") as string,
-      nisn: form.get("nisn") as string,
-      tanggal_lahir: form.get("tanggal_lahir") as string,
-      jurusan_id: form.get("jurusan_id") as string,
-      metode_pembayaran: form.get("metode_pembayaran") as string,
-    };
+    const jurusan_id = form.get("jurusan_id") as string | null;
+    const metode_pembayaran = form.get("metode_pembayaran") as string | null;
 
+    if (!jurusan_id || !metode_pembayaran) {
+      return NextResponse.json({ success: false, error: "Data tidak lengkap" }, { status: 400 });
+    }
+
+    // FILE UPLOAD
     const fileKeys = ["ijazah", "akta", "kk", "foto", "rapor", "sk_nilai"];
-
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -30,46 +40,52 @@ export async function POST(req: NextRequest) {
         continue;
       }
 
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const filename = `${Date.now()}-${file.name}`;
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const filename = `${Date.now()}-${file.name.replace(/\s+/g, "_")}`;
       const filepath = path.join(uploadDir, filename);
-
       fs.writeFileSync(filepath, buffer);
+
       savedFiles[key] = `/uploads/${filename}`;
     }
 
+    // NOMOR PENDAFTARAN
+    const nomor_pendaftaran = `REG-${Date.now()}`;
+
+    // DATABASE
     const db = await getConnection();
 
-    await db.execute(
-      `INSERT INTO ppdb 
-        (nama_lengkap, nisn, tanggal_lahir, jurusan_id, metode_pembayaran,
+    const sql = `
+      INSERT INTO ppdb
+        (user_id, nomor_pendaftaran, jurusan_id, metode_pembayaran,
          ijazah, akta, kk, foto, rapor, sk_nilai)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        fields.nama_lengkap,
-        fields.nisn,
-        fields.tanggal_lahir,
-        fields.jurusan_id,
-        fields.metode_pembayaran,
-        savedFiles.ijazah,
-        savedFiles.akta,
-        savedFiles.kk,
-        savedFiles.foto,
-        savedFiles.rapor,
-        savedFiles.sk_nilai,
-      ],
-    );
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const params = [
+      userId,
+      nomor_pendaftaran,
+      Number(jurusan_id),
+      metode_pembayaran,
+      savedFiles.ijazah,
+      savedFiles.akta,
+      savedFiles.kk,
+      savedFiles.foto,
+      savedFiles.rapor,
+      savedFiles.sk_nilai,
+    ];
+
+    await db.execute(sql, params);
 
     return NextResponse.json({
       success: true,
       message: "PPDB berhasil disimpan",
+      nomor_pendaftaran,
     });
   } catch (err: any) {
+    console.error("PPDB ERROR:", err);
     return NextResponse.json(
       { success: false, error: err.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
