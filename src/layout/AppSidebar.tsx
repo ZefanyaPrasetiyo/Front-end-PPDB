@@ -48,12 +48,12 @@ const navMain: NavItem[] = [
   { 
     icon: <GridIcon />, 
     name: "Dashboard", 
-    path: "/profile", 
+    path: "/admin", 
     roles: ["admin"] },
   { 
     icon: <TableIcon />, 
-    name: "Table User", path: 
-    "/profile", 
+    name: "Data pengguna", path: 
+    "/admin/data-user", 
     roles: ["admin"] },
   { 
     icon: <UserCircleIcon />, 
@@ -75,7 +75,7 @@ const navMain: NavItem[] = [
   { 
     icon: <UserCircleIcon />, 
     name: "Dashboard", 
-    path: "/staff/datasiswa", 
+    path: "/staff/dashboard", 
     roles: ["tu"] 
   },
 ];

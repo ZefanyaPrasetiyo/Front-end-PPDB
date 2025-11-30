@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     }
 
     // FILE UPLOAD
-    const fileKeys = ["ijazah", "akta", "kk", "foto", "rapor", "sk_nilai"];
+    const fileKeys = ["ijazah", "akta", "kk", "foto", "rapor", "sk_nilai", "pembayaran"];
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -57,8 +57,8 @@ export async function POST(req: NextRequest) {
     const sql = `
       INSERT INTO ppdb
         (user_id, nomor_pendaftaran, jurusan_id, metode_pembayaran,
-         ijazah, akta, kk, foto, rapor, sk_nilai)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ijazah, akta, kk, foto, rapor, sk_nilai, pembayaran)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const params = [
@@ -72,6 +72,7 @@ export async function POST(req: NextRequest) {
       savedFiles.foto,
       savedFiles.rapor,
       savedFiles.sk_nilai,
+      savedFiles.pembayaran,
     ];
 
     await db.execute(sql, params);

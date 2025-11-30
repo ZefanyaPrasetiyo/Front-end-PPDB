@@ -1,18 +1,5 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-
-// shadcn/ui primitives (assumed installed in the project)
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -21,273 +8,244 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Badge from "@/components/ui/badge/Badge";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import useFetchCalonSiswa from "@/hooks/useCalonSiswa";
+import { useJurusan } from "@/hooks/useJurusan";
 
-// -----------------------------
-// Types
-// -----------------------------
-export interface CalonSiswa {
-  id: number;
-  nama_lengkap: string;
-  nisn: string;
-  jurusan: string;
-  foto: string | null;
-  nomor_pendaftaran: string | null;
-  metode_pembayaran: "lunas" | "cicil" | null;
-  tanggal_daftar: string | null;
-}
+export default function DataPpdb() {
+  const { data, loading, error, fetchData } = useFetchCalonSiswa();
+  const { jurusan } = useJurusan();
 
-// -----------------------------
-// Helpers / Hooks
-// -----------------------------
-function useFetchCalonSiswa(url = "/api/datappdb") {
-  const [data, setData] = useState<CalonSiswa[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
 
-  useEffect(() => {
-    let mounted = true;
-    async function load() {
-      try {
-        setLoading(true);
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
-        const json = await res.json();
-        if (!mounted) return;
-        setData(Array.isArray(json) ? json : []);
-      } catch (err: any) {
-        if (!mounted) return;
-        setError(err.message || "Unknown error");
-      } finally {
-        if (!mounted) return;
-        setLoading(false);
-      }
+  // ============================
+  // DELETE DATA
+  // ============================
+  const deleteUser = async (userId: number) => {  // <— Nama variable jangan id, bikin bingung
+  if (!confirm("Yakin ingin menghapus data ini?")) return;
+
+  try {
+    const res = await fetch(`/api/datappdb/${userId}`, { method: "DELETE" }); // <— pakai user_id
+    if (!res.ok) throw new Error("Gagal delete");
+
+    await fetchData();
+    alert("User berhasil dihapus!");
+  } catch (err) {
+    console.error(err);
+    alert("Gagal menghapus user");
+  }
+};
+
+  // ============================
+  // OPEN EDIT MODAL
+  // ============================
+  const openEditModal = (siswa: any) => {
+    setSelectedUser({
+      ppdb_id: siswa.ppdb_id,
+      user_id: siswa.user_id, // <-- WAJIB buat update nama_user
+      nama_user: siswa.nama_user,
+      jurusan_id: siswa.jurusan_id ?? "",
+      metode_pembayaran: siswa.metode_pembayaran ?? "",
+    });
+
+    setShowModal(true);
+  };
+
+  // ============================
+  // UPDATE FIELD
+  // ============================
+  const updateField = (key: string, value: any) => {
+    setSelectedUser((prev: any) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  // ============================
+  // SUBMIT EDIT
+  // ============================
+  const submitEdit = async () => {
+  if (!selectedUser) return;
+
+  // ---------- LOG DATA SEBELUM DIKIRIM ----------
+  console.log("=== SUBMIT EDIT ===");
+  console.log("Selected User (RAW):", selectedUser);
+
+  const payload = {
+    nama_user: selectedUser.nama_user ?? null,
+    jurusan_id: selectedUser.jurusan_id ? Number(selectedUser.jurusan_id) : null,
+    metode_pembayaran: selectedUser.metode_pembayaran ?? null,
+  };
+
+  console.log("Payload Dikirim:", payload);
+  console.log("ID Dikirim:", selectedUser.ppdb_id);
+
+  try {
+    const res = await fetch(`/api/datappdb/${selectedUser.ppdb_id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("API ERROR:", errorText);
+      throw new Error("Update gagal");
     }
 
-    load();
-    return () => {
-      mounted = false;
-    };
-  }, [url]);
+    alert("Data berhasil diperbarui!");
+    await fetchData();
+    setShowModal(false);
 
-  return { data, loading, error };
-}
-
-// -----------------------------
-// Subcomponents
-// -----------------------------
-function SkeletonRow() {
-  return (
-    <TableRow className="animate-pulse">
-      <TableCell className="py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-[45px] h-[45px] rounded-lg bg-gray-200 dark:bg-gray-700" />
-          <div className="space-y-1">
-            <div className="h-4 w-40 bg-gray-200 dark:bg-gray-700 rounded" />
-            <div className="h-3 w-28 bg-gray-200 dark:bg-gray-700 rounded" />
-          </div>
-        </div>
-      </TableCell>
-      <TableCell>
-        <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded" />
-      </TableCell>
-      <TableCell>
-        <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
-      </TableCell>
-      <TableCell>
-        <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
-      </TableCell>
-      <TableCell>
-        <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
-      </TableCell>
-      <TableCell>
-        <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded" />
-      </TableCell>
-    </TableRow>
-  );
-}
-
-function FilterBar({
-  search,
-  setSearch,
-  jurusan,
-  setJurusan,
-  jurusanOptions,
-}: {
-  search: string;
-  setSearch: (v: string) => void;
-  jurusan: string;
-  setJurusan: (v: string) => void;
-  jurusanOptions: string[];
-}) {
-  return (
-    <div className="flex flex-wrap gap-2 items-center w-full sm:w-auto">
-      <Input
-        placeholder="Cari nama siswa..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="sm:w-[260px]"
-      />
-
-      <Select value={jurusan} onValueChange={(v) => setJurusan(v)}>
-        <SelectTrigger className="w-[160px]">
-          <SelectValue placeholder="Filter Jurusan" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Semua</SelectItem>
-          {jurusanOptions.map((j) => (
-            <SelectItem key={j} value={j}>
-              {j}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-}
-
-function SiswaRow({ siswa }: { siswa: CalonSiswa }) {
-  const router = useRouter();
-  // default image: use local uploaded asset (developer-provided path)
-  const defaultAvatar = "/mnt/data/178d2840-42c2-41d6-b5f6-4f3b11fc3264.png";
+  } catch (err) {
+    console.error("UPDATE ERROR:", err);
+    alert("Gagal update!");
+  }
+};
 
   return (
-    <TableRow className="hover:bg-gray-50 dark:hover:bg-white/5 transition">
-      <TableCell className="py-3">
-        <div className="flex items-center gap-3">
-          <div className="flex flex-col">
-            <p className="font-medium">{siswa.nama_lengkap}</p>
-            <span className="text-xs text-gray-400">Terdaftar: {siswa.tanggal_daftar || "-"}</span>
-          </div>
-        </div>
-      </TableCell>
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 sm:px-6">
 
-      <TableCell>{siswa.nisn}</TableCell>
-
-      <TableCell className="font-medium">{siswa.jurusan}</TableCell>
-
-      <TableCell>
-        {siswa.metode_pembayaran ? (
-          <Badge size="sm" color={siswa.metode_pembayaran === "lunas" ? "success" : "warning"}>
-            {siswa.metode_pembayaran}
-          </Badge>
-        ) : (
-          <span className="text-gray-400">-</span>
-        )}
-      </TableCell>
-
-      <TableCell>
-        {siswa.nomor_pendaftaran ?? <span className="text-gray-400">Belum Ada</span>}
-      </TableCell>
-
-      <TableCell>
-        {siswa.nomor_pendaftaran ? (
-          <button
-            onClick={() => router.push(`/admin/ppdb/${siswa.id}`)}
-            className="text-blue-600 hover:text-blue-700 hover:underline transition font-medium"
-          >
-            Lihat
-          </button>
-        ) : (
-          <button
-            onClick={() => router.push(`/admin/ppdb/tambah?user=${siswa.id}`)}
-            className="text-green-600 hover:text-green-700 hover:underline transition font-medium"
-          >
-            Tambah
-          </button>
-        )}
-      </TableCell>
-    </TableRow>
-  );
-}
-
-// -----------------------------
-// Main (Refactored) Component
-// -----------------------------
-export default function RecentCalonSiswaRefactor() {
-  const { data, loading } = useFetchCalonSiswa();
-  const [search, setSearch] = useState("");
-  const [jurusan, setJurusan] = useState("all");
-
-  // derive jurusan options from data (unique)
-  const jurusanOptions = useMemo(() => {
-    const set = new Set<string>();
-    data.forEach((d) => d.jurusan && set.add(d.jurusan));
-    return Array.from(set).sort();
-  }, [data]);
-
-  // filtered list
-  const filtered = useMemo(() => {
-    let list = data;
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter((i) => i.nama_lengkap.toLowerCase().includes(q));
-    }
-    if (jurusan !== "all") {
-      list = list.filter((i) => i.jurusan === jurusan);
-    }
-    return list;
-  }, [data, search, jurusan]);
-
-  return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-6 py-5 dark:border-gray-800 dark:bg-white/5 shadow-[0_5px_30px_-10px_rgba(0,0,0,0.15)] backdrop-blur-xl">
-      <div className="flex flex-wrap gap-3 mb-6 items-center justify-between">
-        <h3 className="text-xl font-semibold text-gray-800 dark:text-white">📋 Data Calon Siswa</h3>
-
-        <FilterBar
-          search={search}
-          setSearch={setSearch}
-          jurusan={jurusan}
-          setJurusan={setJurusan}
-          jurusanOptions={jurusanOptions}
-        />
+      {/* HEADER */}
+      <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:justify-between">
+        <h3 className="text-lg font-semibold text-gray-800">Data Calon Siswa</h3>
       </div>
 
-      {loading ? (
-        <div className="max-w-full overflow-x-auto">
+      {/* TABLE */}
+      <div className="max-w-full overflow-x-auto">
+        {loading && <p className="p-4">Loading...</p>}
+        {error && <p className="p-4 text-red-500">{error}</p>}
+
+        {!loading && !error && (
           <Table>
-            <TableHeader className="border-gray-200 dark:border-gray-700 border-y bg-gray-50/40 dark:bg-white/10">
+            <TableHeader className="border-gray-100 border-y">
               <TableRow>
-                <TableCell isHeader>Calon Siswa</TableCell>
-                <TableCell isHeader>NISN</TableCell>
+                <TableCell isHeader>ID</TableCell>
+                <TableCell isHeader>Nama</TableCell>
                 <TableCell isHeader>Jurusan</TableCell>
-                <TableCell isHeader>Metode</TableCell>
-                <TableCell isHeader>No. Pendaftaran</TableCell>
-                <TableCell isHeader>Aksi</TableCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <SkeletonRow key={i} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      ) : (
-        <div className="max-w-full overflow-x-auto">
-          <Table>
-            <TableHeader className="border-gray-200 dark:border-gray-700 border-y bg-gray-50/40 dark:bg-white/10">
-              <TableRow>
-                <TableCell isHeader>Calon Siswa</TableCell>
                 <TableCell isHeader>NISN</TableCell>
-                <TableCell isHeader>Jurusan</TableCell>
-                <TableCell isHeader>Metode</TableCell>
-                <TableCell isHeader>No. Pendaftaran</TableCell>
+                <TableCell isHeader>No Pendaftaran</TableCell>
+                <TableCell isHeader>Status</TableCell>
+                <TableCell isHeader>Tanggal Daftar</TableCell>
                 <TableCell isHeader>Aksi</TableCell>
               </TableRow>
             </TableHeader>
 
-            <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {filtered.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-6 text-gray-400">
-                    Tidak ada hasil ditemukan
+            <TableBody className="divide-y divide-gray-100">
+              {data.map((siswa: any) => (
+                <TableRow key={siswa.ppdb_id}>
+                  <TableCell>{siswa.ppdb_id}</TableCell>
+                  <TableCell className="font-medium">{siswa.nama_user}</TableCell>
+                  <TableCell>{siswa.singkatan}</TableCell>
+                  <TableCell>{siswa.nisn_user}</TableCell>
+                  <TableCell>{siswa.nomor_pendaftaran ?? "-"}</TableCell>
+
+                  <TableCell>
+                    <Badge
+                      size="sm"
+                      color={
+                        siswa.metode_pembayaran === "lunas"
+                          ? "success"
+                          : siswa.metode_pembayaran === "cicil"
+                          ? "warning"
+                          : "error"
+                      }
+                    >
+                      {siswa.metode_pembayaran || "Belum bayar"}
+                    </Badge>
+                  </TableCell>
+
+                  <TableCell>{siswa.tanggal_daftar}</TableCell>
+
+                  <TableCell className="flex gap-2">
+                    <Button
+                      className="bg-[#13314f] text-white"
+                      onClick={() => openEditModal(siswa)}
+                    >
+                      Edit
+                    </Button>
+
+                   <Button
+  className="bg-red-600 text-white"
+  onClick={() => deleteUser(siswa.user_id)} // <— FIX DI SINI
+>
+  Hapus
+</Button>
+
                   </TableCell>
                 </TableRow>
-              ) : (
-                filtered.map((s) => <SiswaRow key={s.id} siswa={s} />)
-              )}
+              ))}
             </TableBody>
+
           </Table>
+        )}
+      </div>
+
+      {/* ==============================
+          MODAL EDIT
+      =============================== */}
+      {showModal && selectedUser && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-xl w-[400px] shadow-xl">
+
+            <h2 className="text-lg font-semibold mb-4">Edit Data Siswa</h2>
+
+            {/* NAMA */}
+            <div className="mb-4">
+              <label className="text-sm text-gray-600">Nama</label>
+              <input
+                type="text"
+                value={selectedUser.nama_user}
+                onChange={(e) => updateField("nama_user", e.target.value)}
+                className="w-full border px-3 py-2 rounded mt-1"
+              />
+            </div>
+
+            {/* JURUSAN */}
+            <div className="mb-4">
+              <label className="text-sm text-gray-600">Jurusan</label>
+              <select
+                value={selectedUser.jurusan_id}
+                onChange={(e) => updateField("jurusan_id", e.target.value)}
+                className="w-full border px-3 py-2 rounded mt-1"
+              >
+                <option value="">Pilih jurusan</option>
+                {jurusan.map((j: any) => (
+                  <option key={j.id_jurusan} value={j.id_jurusan}>
+                    {j.singkatan}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* PEMBAYARAN */}
+            <div className="mb-4">
+              <label className="text-sm text-gray-600">Status Pembayaran</label>
+              <select
+                value={selectedUser.metode_pembayaran}
+                onChange={(e) => updateField("metode_pembayaran", e.target.value)}
+                className="w-full border px-3 py-2 rounded mt-1"
+              >
+                <option value="">Belum bayar</option>
+                <option value="lunas">Lunas</option>
+                <option value="cicil">Cicil</option>
+              </select>
+            </div>
+
+            {/* BUTTON */}
+            <div className="flex justify-end gap-2 mt-5">
+              <Button className="bg-gray-300" onClick={() => setShowModal(false)}>
+                Batal
+              </Button>
+
+              <Button className="bg-[#13314f] text-white" onClick={submitEdit}>
+                Simpan
+              </Button>
+            </div>
+
+          </div>
         </div>
       )}
     </div>

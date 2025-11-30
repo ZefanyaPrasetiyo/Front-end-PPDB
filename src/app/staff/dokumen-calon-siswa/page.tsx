@@ -13,34 +13,34 @@ import useFetchCalonSiswa from "@/hooks/useCalonSiswa";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-export default function RecentOrders() {
-  const { data, loading, error } = useFetchCalonSiswa();
+export default function DokumenPpdb() {
+  const { data, loading, error, fetchData } = useFetchCalonSiswa();
   const [editingId, setEditingId] = useState<number | null>(null);
-const [newStatus, setNewStatus] = useState("");
-const updateStatus = async (id: number) => {
-  try {
-    const res = await fetch(`/api/datappdb/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ metode_pembayaran: newStatus }),
-    });
-    fetchData();
+  const [newStatus, setNewStatus] = useState("");
 
-    if (!res.ok) throw new Error("Gagal update");
+  const updateStatus = async (id: number) => {
+    try {
+      const res = await fetch(`/api/datappdb/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ metode_pembayaran: newStatus }),
+      });
 
-    // refresh data
-    alert("Status berhasil diupdate!");
-    setEditingId(null);
-  } catch (err) {
-    console.error(err);
-    alert("Gagal update status");
-  }
-};
+      if (!res.ok) throw new Error("Gagal update");
 
-
+      await fetchData();
+      alert("Status berhasil diupdate!");
+      setEditingId(null);
+    } catch (err) {
+      console.error(err);
+      alert("Gagal update status");
+    }
+  };
 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+      
+      {/* Header */}
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
           Recent Orders
@@ -56,6 +56,7 @@ const updateStatus = async (id: number) => {
         </div>
       </div>
 
+      {/* Table */}
       <div className="max-w-full overflow-x-auto">
         {loading && <p className="p-4">Loading...</p>}
         {error && <p className="p-4 text-red-500">{error}</p>}
@@ -64,117 +65,108 @@ const updateStatus = async (id: number) => {
           <Table>
             <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
               <TableRow>
-                 <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  id
-                </TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  Nama
-                </TableCell>
-                  <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  Jurusan
-                </TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  NISN
-                </TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  No Pendaftaran
-                </TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  Status
-                </TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  Tanggal terdaftar
-                </TableCell>
-                 <TableCell isHeader className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  Aksi
-                </TableCell>
+                <TableCell isHeader className="py-3 font-medium text-gray-500">ID</TableCell>
+                <TableCell isHeader className="py-3 font-medium text-gray-500">Nama</TableCell>
+                <TableCell isHeader className="py-3 font-medium text-gray-500">Ijazah</TableCell>
+                <TableCell isHeader className="py-3 font-medium text-gray-500">Akta</TableCell>
+                <TableCell isHeader className="py-3 font-medium text-gray-500">KK</TableCell>
+                <TableCell isHeader className="py-3 font-medium text-gray-500">Foto</TableCell>
+                <TableCell isHeader className="py-3 font-medium text-gray-500">Rapor</TableCell>
+                <TableCell isHeader className="py-3 font-medium text-gray-500">Sk_Nilai</TableCell>
+                <TableCell isHeader className="py-3 font-medium text-gray-500">Aksi</TableCell>
               </TableRow>
             </TableHeader>
 
-            <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {data.map((siswa) => (
+            <TableBody className="divide-y divide-gray-100 dark:divide-gray-800 space-y-8">
+              {data.map((siswa: any) => (
                 <TableRow key={siswa.id}>
-                   <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {siswa.id}
-                  </TableCell>
-                  <TableCell className="py-3">
-                    <div className="flex items-center gap-3">
-                      <div>
-                        <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                          {siswa.nama_user}
-                        </p>
-                      </div>
-                    </div>
+                  <TableCell>{siswa.id}</TableCell>
+
+                  <TableCell className="font-medium text-gray-900">
+                    {siswa.nama_user}
                   </TableCell>
 
-                   <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {siswa.singkatan}
+                  {/* Ijazah */}
+                  <TableCell>
+                    {siswa.ijazah ? (
+                      <Image
+                        src={siswa.ijazah}
+                        width={60}
+                        height={60}
+                        alt="Ijazah"
+                        className="rounded border"
+                      />
+                    ) : "-"}
                   </TableCell>
 
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {siswa.nisn_user}
+                  {/* Akta */}
+                  <TableCell>
+                    {siswa.akta ? (
+                      <Image
+                        src={siswa.akta}
+                        width={60}
+                        height={60}
+                        alt="Akta"
+                        className="rounded border"
+                      />
+                    ) : "-"}
                   </TableCell>
 
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {siswa.nomor_pendaftaran ?? "-"}
+                  {/* KK */}
+                  <TableCell>
+                    {siswa.kk ? (
+                      <Image
+                        src={siswa.kk}
+                        width={60}
+                        height={60}
+                        alt="KK"
+                        className="rounded border"
+                      />
+                    ) : "-"}
                   </TableCell>
 
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    <Badge
-                      size="sm"
-                      color={
-                        siswa.metode_pembayaran === "lunas"
-                          ? "success"
-                          : siswa.metode_pembayaran === "cicil"
-                          ? "warning"
-                          : "error"
-                      }
-                    >
-                      {siswa.metode_pembayaran || "Belum bayar"}
-                    </Badge>
+                  {/* Foto */}
+                  <TableCell>
+                    {siswa.foto ? (
+                      <Image
+                        src={siswa.foto}
+                        width={60}
+                        height={60}
+                        alt="Foto"
+                        className="rounded border"
+                      />
+                    ) : "-"}
                   </TableCell>
-                  
-                   <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {siswa.tanggal_daftar}
+
+                  {/* Rapor */}
+                  <TableCell>
+                    {siswa.rapor ? (
+                      <Image
+                        src={siswa.rapor}
+                        width={60}
+                        height={60}
+                        alt="Rapor"
+                        className="rounded border"
+                      />
+                    ) : "-"}
                   </TableCell>
-                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-  {editingId === siswa.id ? (
-    <div className="flex items-center gap-2">
-      <select
-        value={newStatus}
-        onChange={(e) => setNewStatus(e.target.value)}
-        className="border rounded px-2 py-1"
-      >
-        <option value="lunas">Lunas</option>
-        <option value="cicil">Cicil</option>
-      </select>
+                  <TableCell>
+                    {siswa.sk_nilai ? (
+                      <Image
+                        src={siswa.sk_nilai}
+                        width={60}
+                        height={60}
+                        alt="Rapor"
+                        className="rounded border"
+                      />
+                    ) : "-"}
+                  </TableCell>
+                  <TableCell>
+                    <Button className="bg-[#13314f] text-white hover:bg-[#1d4a78]">
+                      Detail
+                    </Button>
+                  </TableCell>
 
-      <Button
-        className="bg-green-600 text-white hover:bg-green-700"
-        onClick={() => updateStatus(siswa.id)}
-      >
-        Save
-      </Button>
-
-      <Button
-        className="bg-gray-400 text-white hover:bg-gray-500"
-        onClick={() => setEditingId(null)}
-      >
-        Cancel
-      </Button>
-    </div>
-  ) : (
-    <Button
-      className="bg-[#13314f] text-white hover:bg-[#1d4a78]"
-      onClick={() => {
-        setEditingId(siswa.id);
-        setNewStatus(siswa.metode_pembayaran || "");
-      }}
-    >
-      Edit
-    </Button>
-  )}
-</TableCell>
                 </TableRow>
               ))}
             </TableBody>
