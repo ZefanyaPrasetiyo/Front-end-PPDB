@@ -20,31 +20,25 @@ export default function DataPpdb() {
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
 
-  // ============================
-  // DELETE DATA
-  // ============================
-  const deleteUser = async (userId: number) => {  // <— Nama variable jangan id, bikin bingung
-  if (!confirm("Yakin ingin menghapus data ini?")) return;
+  const deleteUser = async (userId: number) => {
+    if (!confirm("Yakin ingin menghapus data ini?")) return;
 
-  try {
-    const res = await fetch(`/api/datappdb/${userId}`, { method: "DELETE" }); // <— pakai user_id
-    if (!res.ok) throw new Error("Gagal delete");
+    try {
+      const res = await fetch(`/api/datappdb/${userId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Gagal delete");
 
-    await fetchData();
-    alert("User berhasil dihapus!");
-  } catch (err) {
-    console.error(err);
-    alert("Gagal menghapus user");
-  }
-};
+      await fetchData();
+      alert("User berhasil dihapus!");
+    } catch (err) {
+      console.error(err);
+      alert("Gagal menghapus user");
+    }
+  };
 
-  // ============================
-  // OPEN EDIT MODAL
-  // ============================
   const openEditModal = (siswa: any) => {
     setSelectedUser({
       ppdb_id: siswa.ppdb_id,
-      user_id: siswa.user_id, // <-- WAJIB buat update nama_user
+      user_id: siswa.user_id,
       nama_user: siswa.nama_user,
       jurusan_id: siswa.jurusan_id ?? "",
       metode_pembayaran: siswa.metode_pembayaran ?? "",
@@ -53,9 +47,6 @@ export default function DataPpdb() {
     setShowModal(true);
   };
 
-  // ============================
-  // UPDATE FIELD
-  // ============================
   const updateField = (key: string, value: any) => {
     setSelectedUser((prev: any) => ({
       ...prev,
@@ -63,132 +54,142 @@ export default function DataPpdb() {
     }));
   };
 
-  // ============================
-  // SUBMIT EDIT
-  // ============================
   const submitEdit = async () => {
-  if (!selectedUser) return;
+    if (!selectedUser) return;
 
-  // ---------- LOG DATA SEBELUM DIKIRIM ----------
-  console.log("=== SUBMIT EDIT ===");
-  console.log("Selected User (RAW):", selectedUser);
+    const payload = {
+      nama_user: selectedUser.nama_user ?? null,
+      jurusan_id: selectedUser.jurusan_id
+        ? Number(selectedUser.jurusan_id)
+        : null,
+      metode_pembayaran: selectedUser.metode_pembayaran ?? null,
+    };
 
-  const payload = {
-    nama_user: selectedUser.nama_user ?? null,
-    jurusan_id: selectedUser.jurusan_id ? Number(selectedUser.jurusan_id) : null,
-    metode_pembayaran: selectedUser.metode_pembayaran ?? null,
+    try {
+      const res = await fetch(`/api/datappdb/${selectedUser.ppdb_id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Update gagal");
+
+      alert("Data berhasil diperbarui!");
+      await fetchData();
+      setShowModal(false);
+    } catch (err) {
+      console.error("UPDATE ERROR:", err);
+      alert("Gagal update!");
+    }
   };
 
-  console.log("Payload Dikirim:", payload);
-  console.log("ID Dikirim:", selectedUser.ppdb_id);
-
-  try {
-    const res = await fetch(`/api/datappdb/${selectedUser.ppdb_id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error("API ERROR:", errorText);
-      throw new Error("Update gagal");
-    }
-
-    alert("Data berhasil diperbarui!");
-    await fetchData();
-    setShowModal(false);
-
-  } catch (err) {
-    console.error("UPDATE ERROR:", err);
-    alert("Gagal update!");
-  }
-};
-
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 sm:px-6">
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
 
       {/* HEADER */}
-      <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:justify-between">
-        <h3 className="text-lg font-semibold text-gray-800">Data Calon Siswa</h3>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <h3 className="text-xl font-semibold text-gray-900">
+          Data Calon Siswa
+        </h3>
       </div>
 
       {/* TABLE */}
-      <div className="max-w-full overflow-x-auto">
+      <div className="overflow-x-auto">
         {loading && <p className="p-4">Loading...</p>}
         {error && <p className="p-4 text-red-500">{error}</p>}
 
         {!loading && !error && (
-          <Table>
-            <TableHeader className="border-gray-100 border-y">
-              <TableRow>
-                <TableCell isHeader>ID</TableCell>
-                <TableCell isHeader>Nama</TableCell>
-                <TableCell isHeader>Jurusan</TableCell>
-                <TableCell isHeader>NISN</TableCell>
-                <TableCell isHeader>No Pendaftaran</TableCell>
-                <TableCell isHeader>Status</TableCell>
-                <TableCell isHeader>Tanggal Daftar</TableCell>
-                <TableCell isHeader>Aksi</TableCell>
-              </TableRow>
-            </TableHeader>
+          <Table className="min-w-full">
+  <TableHeader>
+    <TableRow className="bg-gray-50">
+      <TableCell isHeader className="py-4 px-4 font-semibold text-gray-700">ID</TableCell>
+      <TableCell isHeader className="py-4 px-4 font-semibold text-gray-700">Nama</TableCell>
+      <TableCell isHeader className="py-4 px-4 font-semibold text-gray-700">Jurusan</TableCell>
+      <TableCell isHeader className="py-4 px-4 font-semibold text-gray-700">NISN</TableCell>
+      <TableCell isHeader className="py-4 px-4 font-semibold text-gray-700">No Pendaftaran</TableCell>
+      <TableCell isHeader className="py-4 px-4 font-semibold text-gray-700">Status</TableCell>
+      <TableCell isHeader className="py-4 px-4 font-semibold text-gray-700">Tanggal Daftar</TableCell>
+      <TableCell isHeader className="py-4 px-4 font-semibold text-center text-gray-700">Aksi</TableCell>
+    </TableRow>
+  </TableHeader>
 
-            <TableBody className="divide-y divide-gray-100">
-              {data.map((siswa: any) => (
-                <TableRow key={siswa.ppdb_id}>
-                  <TableCell>{siswa.ppdb_id}</TableCell>
-                  <TableCell className="font-medium">{siswa.nama_user}</TableCell>
-                  <TableCell>{siswa.singkatan}</TableCell>
-                  <TableCell>{siswa.nisn_user}</TableCell>
-                  <TableCell>{siswa.nomor_pendaftaran ?? "-"}</TableCell>
+  <TableBody className="divide-y divide-gray-200">
+    {data.map((siswa: any) => (
+      <TableRow
+        key={siswa.ppdb_id}
+        className="hover:bg-gray-50 transition-all text-[15px]"
+      >
+        <TableCell className="py-4 px-4">{siswa.ppdb_id}</TableCell>
 
-                  <TableCell>
-                    <Badge
-                      size="sm"
-                      color={
-                        siswa.metode_pembayaran === "lunas"
-                          ? "success"
-                          : siswa.metode_pembayaran === "cicil"
-                          ? "warning"
-                          : "error"
-                      }
-                    >
-                      {siswa.metode_pembayaran || "Belum bayar"}
-                    </Badge>
-                  </TableCell>
+        <TableCell className="py-4 px-4 font-medium text-gray-900">
+          {siswa.nama_user}
+        </TableCell>
 
-                  <TableCell>{siswa.tanggal_daftar}</TableCell>
+        <TableCell className="py-4 px-4">{siswa.singkatan}</TableCell>
 
-                  <TableCell className="flex gap-2">
-                    <Button
-                      className="bg-[#13314f] text-white"
-                      onClick={() => openEditModal(siswa)}
-                    >
-                      Edit
-                    </Button>
+        <TableCell className="py-4 px-4">{siswa.nisn_user}</TableCell>
 
-                   <Button
-  className="bg-red-600 text-white"
-  onClick={() => deleteUser(siswa.user_id)} // <— FIX DI SINI
->
-  Hapus
-</Button>
+        <TableCell className="py-4 px-4">
+          {siswa.nomor_pendaftaran ?? "-"}
+        </TableCell>
 
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+        <TableCell className="py-4 px-4">
+          <Badge
+            size="sm"
+            color={
+              siswa.metode_pembayaran === "lunas"
+                ? "success"
+                : siswa.metode_pembayaran === "cicil"
+                ? "warning"
+                : "error"
+            }
+            className="text-sm px-3 py-1 rounded-full"
+          >
+            {siswa.metode_pembayaran || "Belum bayar"}
+          </Badge>
+        </TableCell>
 
-          </Table>
+        <TableCell className="py-4 px-4 whitespace-nowrap">
+          {new Date(siswa.tanggal_daftar).toLocaleDateString("id-ID", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })}
+        </TableCell>
+
+ <TableCell className="py-4 px-4">
+  <div className="flex gap-2 justify-center">
+
+    {/* Tombol Edit */}
+    <Button
+      onClick={() => openEditModal(siswa)}
+      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl shadow-sm hover:scale-[1.03] transition"
+    >
+      Edit
+    </Button>
+
+    {/* Tombol Hapus */}
+    <Button
+      onClick={() => deleteUser(siswa.ppdb_id)}
+      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl shadow-sm hover:scale-[1.03] transition"
+    >
+      Hapus
+    </Button>
+
+  </div>
+</TableCell>
+
+      </TableRow>
+    ))}
+  </TableBody>
+</Table>
         )}
       </div>
 
-      {/* ==============================
-          MODAL EDIT
-      =============================== */}
+      {/* MODAL */}
       {showModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-xl w-[400px] shadow-xl">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
 
             <h2 className="text-lg font-semibold mb-4">Edit Data Siswa</h2>
 
@@ -199,7 +200,7 @@ export default function DataPpdb() {
                 type="text"
                 value={selectedUser.nama_user}
                 onChange={(e) => updateField("nama_user", e.target.value)}
-                className="w-full border px-3 py-2 rounded mt-1"
+                className="w-full border px-3 py-2 rounded-lg mt-1"
               />
             </div>
 
@@ -209,7 +210,7 @@ export default function DataPpdb() {
               <select
                 value={selectedUser.jurusan_id}
                 onChange={(e) => updateField("jurusan_id", e.target.value)}
-                className="w-full border px-3 py-2 rounded mt-1"
+                className="w-full border px-3 py-2 rounded-lg mt-1"
               >
                 <option value="">Pilih jurusan</option>
                 {jurusan.map((j: any) => (
@@ -225,8 +226,10 @@ export default function DataPpdb() {
               <label className="text-sm text-gray-600">Status Pembayaran</label>
               <select
                 value={selectedUser.metode_pembayaran}
-                onChange={(e) => updateField("metode_pembayaran", e.target.value)}
-                className="w-full border px-3 py-2 rounded mt-1"
+                onChange={(e) =>
+                  updateField("metode_pembayaran", e.target.value)
+                }
+                className="w-full border px-3 py-2 rounded-lg mt-1"
               >
                 <option value="">Belum bayar</option>
                 <option value="lunas">Lunas</option>
@@ -235,12 +238,18 @@ export default function DataPpdb() {
             </div>
 
             {/* BUTTON */}
-            <div className="flex justify-end gap-2 mt-5">
-              <Button className="bg-gray-300" onClick={() => setShowModal(false)}>
+            <div className="flex justify-end gap-3 mt-6">
+              <Button
+                className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg"
+                onClick={() => setShowModal(false)}
+              >
                 Batal
               </Button>
 
-              <Button className="bg-[#13314f] text-white" onClick={submitEdit}>
+              <Button
+                className="bg-[#13314f] text-white px-4 py-2 rounded-lg"
+                onClick={submitEdit}
+              >
                 Simpan
               </Button>
             </div>

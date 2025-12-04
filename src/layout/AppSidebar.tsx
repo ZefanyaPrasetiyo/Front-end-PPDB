@@ -31,49 +31,62 @@ type NavItem = {
 };
 
 const navMain: NavItem[] = [
-  { icon: <UserCircleIcon />, 
+  { 
+    icon: <GridIcon />, 
     name: "Beranda", 
     path: "/user", 
-    roles: ["calon_siswa"] },
+    roles: ["calon_siswa"] 
+  },
   { 
-    icon: <UserCircleIcon />, 
+    icon: <ListIcon />, 
     name: "PPDB", 
     path: "/user/ppdb", 
-    roles: ["calon_siswa"] },
+    roles: ["calon_siswa"] 
+  },
   { 
-    icon: <UserCircleIcon />, 
+    icon: <PageIcon />, 
     name: "Panduan", 
     path: "/user/panduan", 
-    roles: ["calon_siswa"] },
+    roles: ["calon_siswa"] 
+  },
+
+  // ADMIN
   { 
     icon: <GridIcon />, 
     name: "Dashboard", 
     path: "/admin", 
-    roles: ["admin"] },
+    roles: ["admin"] 
+  },
   { 
     icon: <TableIcon />, 
-    name: "Data pengguna", path: 
-    "/admin/data-user", 
-    roles: ["admin"] },
+    name: "Data pengguna", 
+    path: "/admin/data-user", 
+    roles: ["admin"] 
+  },
+
+  // UMUM
   { 
     icon: <UserCircleIcon />, 
     name: "User Profile", 
     path: "/profile", 
-    roles: ["calon_siswa", "tu", "admin"] },
-   { 
-    icon: <UserCircleIcon />, 
-    name: "calon siswa", 
+    roles: ["calon_siswa", "tu", "admin"] 
+  },
+
+  // TU
+  { 
+    icon: <TableIcon />, 
+    name: "Calon Siswa", 
     path: "/staff/calonsiswa", 
     roles: ["tu"] 
   },
   { 
-    icon: <UserCircleIcon />, 
-    name: "dokumen", 
+    icon: <PageIcon />, 
+    name: "Dokumen", 
     path: "/staff/dokumen-calon-siswa", 
     roles: ["tu"] 
   },
   { 
-    icon: <UserCircleIcon />, 
+    icon: <GridIcon />, 
     name: "Dashboard", 
     path: "/staff/dashboard", 
     roles: ["tu"] 
@@ -81,17 +94,33 @@ const navMain: NavItem[] = [
 ];
 
 const navAnother: NavItem[] = [
-  { icon: <PageIcon />, name: "Riwayat", path: "/laporan", roles: ["calon_siswa"] },
+  { 
+    icon: <PageIcon />, 
+    name: "Riwayat", 
+    path: "/user/riwayat", 
+    roles: ["calon_siswa"] 
+  },
   {
     icon: <ListIcon />,
     name: "Pengaturan",
     subItems: [
-      { name: "Akun", path: "/pengaturan/akun", icon: <UserCircleIcon />, roles: ["admin"] },
-      { name: "Notifikasi", path: "/pengaturan/notifikasi", icon: <ListIcon />, roles: ["admin", "tu"] },
+      { 
+        name: "Akun", 
+        path: "/pengaturan/akun", 
+        icon: <UserCircleIcon />, 
+        roles: ["admin"] 
+      },
+      { 
+        name: "Notifikasi", 
+        path: "/pengaturan/notifikasi", 
+        icon: <ListIcon />, 
+        roles: ["admin", "tu"] 
+      },
     ],
     roles: ["admin", "tu"],
   },
 ];
+
 
 export default function AppSidebar() {
   const pathname = usePathname();

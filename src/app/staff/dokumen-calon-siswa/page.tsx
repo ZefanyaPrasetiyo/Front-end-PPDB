@@ -7,52 +7,62 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Badge from "@/components/ui/badge/Badge";
 import Image from "next/image";
 import useFetchCalonSiswa from "@/hooks/useCalonSiswa";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+
+const DokumenItem = ({ src, alt }: { src: any; alt: string }) => {
+  if (!src) return <span className="text-gray-400 text-sm">-</span>;
+
+  return (
+    <div className="p-1 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition cursor-pointer">
+      <Image
+        src={src}
+        width={70}
+        height={70}
+        alt={alt}
+        className="rounded-lg object-cover w-[70px] h-[70px]"
+      />
+    </div>
+  );
+};
 
 export default function DokumenPpdb() {
-  const { data, loading, error, fetchData } = useFetchCalonSiswa();
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [newStatus, setNewStatus] = useState("");
+  const { data, loading, error } = useFetchCalonSiswa();
 
-  const updateStatus = async (id: number) => {
-    try {
-      const res = await fetch(`/api/datappdb/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ metode_pembayaran: newStatus }),
-      });
+  const dokumenFields = [
+    "ijazah",
+    "akta",
+    "kk",
+    "foto",
+    "rapor",
+    "sk_nilai",
+  ];
 
-      if (!res.ok) throw new Error("Gagal update");
-
-      await fetchData();
-      alert("Status berhasil diupdate!");
-      setEditingId(null);
-    } catch (err) {
-      console.error(err);
-      alert("Gagal update status");
-    }
-  };
+  const headers = [
+    "ID",
+    "Nama",
+    "Ijazah",
+    "Akta",
+    "KK",
+    "Foto",
+    "Rapor",
+    "Sk Nilai",
+    "Aksi",
+  ];
 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
       
       {/* Header */}
-      <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-2 mb-5 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-          Recent Orders
+          Data Dokumen Calon Siswa
         </h3>
 
         <div className="flex items-center gap-3">
-          <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
-            Filter
-          </button>
-          <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
-            See all
-          </button>
+          <Button variant="outline">Filter</Button>
+          <Button variant="outline">See all</Button>
         </div>
       </div>
 
@@ -63,113 +73,54 @@ export default function DokumenPpdb() {
 
         {!loading && !error && (
           <Table>
-            <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
-              <TableRow>
-                <TableCell isHeader className="py-3 font-medium text-gray-500">ID</TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500">Nama</TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500">Ijazah</TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500">Akta</TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500">KK</TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500">Foto</TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500">Rapor</TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500">Sk_Nilai</TableCell>
-                <TableCell isHeader className="py-3 font-medium text-gray-500">Aksi</TableCell>
+
+            {/* HEADER */}
+            <TableHeader className="border-y border-gray-200 dark:border-gray-800">
+              <TableRow className="bg-gray-50/70 dark:bg-white/5 rounded-xl">
+                {headers.map((h) => (
+                  <TableCell
+                    key={h}
+                    isHeader
+                    className="py-4 px-4 text-[13px] font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide"
+                  >
+                    {h}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHeader>
 
-            <TableBody className="divide-y divide-gray-100 dark:divide-gray-800 space-y-8">
+            {/* BODY */}
+            <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
               {data.map((siswa: any) => (
-                <TableRow key={siswa.id}>
-                  <TableCell>{siswa.id}</TableCell>
+                <TableRow
+                  key={siswa.id}
+                  className="hover:bg-gray-50 dark:hover:bg-white/5 transition"
+                >
+                  <TableCell className="py-5 px-4 text-gray-700">
+                    {siswa.user_id}
+                  </TableCell>
 
-                  <TableCell className="font-medium text-gray-900">
+                  <TableCell className="py-5 px-4 font-semibold text-gray-900">
                     {siswa.nama_user}
                   </TableCell>
 
-                  {/* Ijazah */}
-                  <TableCell>
-                    {siswa.ijazah ? (
-                      <Image
-                        src={siswa.ijazah}
-                        width={60}
-                        height={60}
-                        alt="Ijazah"
-                        className="rounded border"
-                      />
-                    ) : "-"}
-                  </TableCell>
+                  {/* Dokumen */}
+                  {dokumenFields.map((field) => (
+                    <TableCell key={field} className="py-5 px-4">
+                      <DokumenItem src={siswa[field]} alt={field} />
+                    </TableCell>
+                  ))}
 
-                  {/* Akta */}
-                  <TableCell>
-                    {siswa.akta ? (
-                      <Image
-                        src={siswa.akta}
-                        width={60}
-                        height={60}
-                        alt="Akta"
-                        className="rounded border"
-                      />
-                    ) : "-"}
-                  </TableCell>
-
-                  {/* KK */}
-                  <TableCell>
-                    {siswa.kk ? (
-                      <Image
-                        src={siswa.kk}
-                        width={60}
-                        height={60}
-                        alt="KK"
-                        className="rounded border"
-                      />
-                    ) : "-"}
-                  </TableCell>
-
-                  {/* Foto */}
-                  <TableCell>
-                    {siswa.foto ? (
-                      <Image
-                        src={siswa.foto}
-                        width={60}
-                        height={60}
-                        alt="Foto"
-                        className="rounded border"
-                      />
-                    ) : "-"}
-                  </TableCell>
-
-                  {/* Rapor */}
-                  <TableCell>
-                    {siswa.rapor ? (
-                      <Image
-                        src={siswa.rapor}
-                        width={60}
-                        height={60}
-                        alt="Rapor"
-                        className="rounded border"
-                      />
-                    ) : "-"}
-                  </TableCell>
-                  <TableCell>
-                    {siswa.sk_nilai ? (
-                      <Image
-                        src={siswa.sk_nilai}
-                        width={60}
-                        height={60}
-                        alt="Rapor"
-                        className="rounded border"
-                      />
-                    ) : "-"}
-                  </TableCell>
-                  <TableCell>
-                    <Button className="bg-[#13314f] text-white hover:bg-[#1d4a78]">
+                  {/* Aksi */}
+                  <TableCell className="py-5 px-4">
+                    <Button className="bg-[#13314f] text-white rounded-xl px-4 py-2 hover:bg-[#1d4a78] shadow-sm hover:shadow-md transition">
                       Detail
                     </Button>
                   </TableCell>
-
                 </TableRow>
               ))}
             </TableBody>
+
           </Table>
         )}
       </div>

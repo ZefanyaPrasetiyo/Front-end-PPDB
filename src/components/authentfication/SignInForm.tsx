@@ -9,6 +9,7 @@ import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
 import Checkbox from "@/components/form/input/Checkbox";
 import Label from "@/components/form/Label";
+import { toast } from "sonner";
 
 export default function SignInSplit() {
   const PRIMARY_COLOR = "#173E67";
@@ -32,10 +33,17 @@ export default function SignInSplit() {
     });
 
     if (res?.error) {
-      alert("Login failed. Please check your email and password.");
-      setLoading(false);
-      return;
+      toast.error("Email atau password salah!");
+        setLoading(false);
+        return;
     }
+
+     toast.success("Login berhasil!");
+      setLoading(false);
+
+       setTimeout(() => {
+        
+      }, 1200);
 
     const session = await fetch("/api/auth/session").then((r) => r.json());
     const role = session?.user?.role;

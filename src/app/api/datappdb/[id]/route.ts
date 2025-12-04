@@ -85,14 +85,9 @@ export async function PUT(request, { params }) {
   }
 }
 
-
-
-// =============================
-// DELETE — HAPUS DATA PPDB + USER
-// =============================
-export async function DELETE(req, { params }) {
+export async function DELETE(req, context) {
   try {
-    const { id } = params; // FIX: Tidak perlu await
+    const { id } = await context.params; // FIX: Tidak perlu await
 
     const db = await getConnection();
 

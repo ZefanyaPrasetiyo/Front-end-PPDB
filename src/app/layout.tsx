@@ -7,6 +7,7 @@ import { SidebarProvider } from "@/context/SidebarContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { SessionProvider } from "next-auth/react";
 import AppSidebarFinal from "@/layout/AppSidebar";
+import { Toaster } from "sonner";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
                 {/* Halaman utama */}
                 <main className="flex-1 min-h-screen">
                   {children}
+                  <Toaster richColors position="top-center" />
                 </main>
               </div>
             </SidebarProvider>
