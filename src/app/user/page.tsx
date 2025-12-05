@@ -5,6 +5,7 @@ import RecentOrders from "@/components/ecommerce/RecentOrders";
 import { useSession } from "next-auth/react";
 import Cta from "@/components/hero/banner";
 import JurusanList from "@/components/hero/jurusan";
+import Lingkungan from "@/components/hero/lingkungan";
 
 export default function Ecommerce() {
 
@@ -18,6 +19,10 @@ export default function Ecommerce() {
 
       <div className="col-span-12 xl:col-span-7">
         <JurusanList />
+      </div>
+
+       <div className="col-span-12 xl:col-span-7">
+        <Lingkungan/>
       </div>
     </div>
   );

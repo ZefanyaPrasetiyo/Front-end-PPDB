@@ -1,27 +1,37 @@
-"use client"
+"use client";
 
-import { EcommerceMetrics } from "@/components/ecommerce/EcommerceMetrics";
 import React from "react";
-import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
-import MonthlySalesChart from "@/components/ecommerce/MonthlySalesChart";
-import StatisticsChart from "@/components/ecommerce/StatisticsChart";
-import RecentOrders from "@/components/ecommerce/RecentOrders";
-import DemographicCard from "@/components/ecommerce/DemographicCard";
-import { useSession } from "next-auth/react";
+import { StatsCards } from "@/components/dashboard/datappdbcard";
+import { StatistikPendaftar } from "@/components/dashboard/StatistikPendaftar";
+import { PendaftarTerbaru } from "@/components/dashboard/PendaftarTerbaru";
 
-export default function Ecommerce() {
-
-
+export default function PetugasDashboard() {
   return (
-    <div className="grid grid-cols-12 gap-4 md:gap-6">
+    <div className="min-h-screen bg-gray-50 p-6 md:p-10">
 
-      <div className="col-span-12 xl:col-span-5">
-        <DemographicCard />
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">Dashboard Petugas</h1>
+        <p className="text-gray-500 mt-1">
+          Pantau perkembangan pendaftar PPDB
+        </p>
       </div>
 
-      <div className="col-span-12 xl:col-span-7">
-        <RecentOrders />
+      {/* Row 1 - Stats */}
+      <div className="mb-6">
+        <StatsCards />
       </div>
+
+      {/* Row 2 - Chart */}
+      <div className="mb-6">
+        <StatistikPendaftar />
+      </div>
+
+      {/* Row 3 - Table / Latest */}
+      <div className="mb-6">
+        <PendaftarTerbaru />
+      </div>
+      
     </div>
   );
 }

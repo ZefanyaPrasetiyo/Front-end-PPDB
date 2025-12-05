@@ -65,11 +65,24 @@ const navMain: NavItem[] = [
   },
 
   // UMUM
-  { 
-    icon: <UserCircleIcon />, 
-    name: "User Profile", 
-    path: "/profile", 
-    roles: ["calon_siswa", "tu", "admin"] 
+
+  {
+    icon: <UserCircleIcon />,
+    name: "Profile",
+    path: "/user/profile",
+    roles: ["calon_siswa"]
+  },
+  {
+    icon: <UserCircleIcon />,
+    name: "Profile",
+    path: "/staff/profile",
+    roles: ["tu"]
+  },
+  {
+    icon: <UserCircleIcon />,
+    name: "Profile",
+    path: "/admin/profile",
+    roles: ["admin"]
   },
 
   // TU
@@ -86,9 +99,15 @@ const navMain: NavItem[] = [
     roles: ["tu"] 
   },
   { 
+    icon: <PageIcon />, 
+    name: "Pembayaran", 
+    path: "/staff/pembayaran-calon-siswa", 
+    roles: ["tu"] 
+  },
+  { 
     icon: <GridIcon />, 
     name: "Dashboard", 
-    path: "/staff/dashboard", 
+    path: "/staff", 
     roles: ["tu"] 
   },
 ];

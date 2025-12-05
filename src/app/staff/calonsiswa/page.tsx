@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import useFetchCalonSiswa from "@/hooks/useCalonSiswa";
 import { useJurusan } from "@/hooks/useJurusan";
+import { toast } from "sonner";
 
 export default function DataPpdb() {
   const { data, loading, error, fetchData } = useFetchCalonSiswa();
@@ -20,20 +21,32 @@ export default function DataPpdb() {
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
 
-  const deleteUser = async (userId: number) => {
-    if (!confirm("Yakin ingin menghapus data ini?")) return;
 
-    try {
-      const res = await fetch(`/api/datappdb/${userId}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Gagal delete");
+const handleDelete = async (userId: string) => {
+  toast.warning("Yakin ingin menghapus user ini?", {
+    description: "Tindakan ini tidak bisa dibatalkan.",
+    action: {
+      label: "Hapus",
+      onClick: async () => {
+        try {
+          const res = await fetch(`/api/datappdb/${userId}`, {
+            method: "DELETE",
+          });
 
-      await fetchData();
-      alert("User berhasil dihapus!");
-    } catch (err) {
-      console.error(err);
-      alert("Gagal menghapus user");
-    }
-  };
+          if (!res.ok) throw new Error("Gagal delete");
+
+          await fetchData();
+
+          toast.success("User berhasil dihapus!");
+        } catch (err) {
+          console.error(err);
+          toast.error("Gagal menghapus user");
+        }
+      },
+    },
+  });
+};
+
 
   const openEditModal = (siswa: any) => {
     setSelectedUser({
@@ -55,33 +68,33 @@ export default function DataPpdb() {
   };
 
   const submitEdit = async () => {
-    if (!selectedUser) return;
+  if (!selectedUser) return;
 
-    const payload = {
-      nama_user: selectedUser.nama_user ?? null,
-      jurusan_id: selectedUser.jurusan_id
-        ? Number(selectedUser.jurusan_id)
-        : null,
-      metode_pembayaran: selectedUser.metode_pembayaran ?? null,
-    };
-
-    try {
-      const res = await fetch(`/api/datappdb/${selectedUser.ppdb_id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) throw new Error("Update gagal");
-
-      alert("Data berhasil diperbarui!");
-      await fetchData();
-      setShowModal(false);
-    } catch (err) {
-      console.error("UPDATE ERROR:", err);
-      alert("Gagal update!");
-    }
+  const payload = {
+    nama_user: selectedUser.nama_user ?? null,
+    jurusan_id: selectedUser.jurusan_id
+      ? Number(selectedUser.jurusan_id)
+      : null,
+    metode_pembayaran: selectedUser.metode_pembayaran ?? null,
   };
+
+  try {
+    const res = await fetch(`/api/datappdb/${selectedUser.ppdb_id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) throw new Error("Update gagal");
+
+    toast.success("Data berhasil diperbarui!");
+    await fetchData();
+    setShowModal(false);
+  } catch (err) {
+    console.error("UPDATE ERROR:", err);
+    toast.error("Gagal update data!");
+  }
+};
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -170,7 +183,7 @@ export default function DataPpdb() {
 
     {/* Tombol Hapus */}
     <Button
-      onClick={() => deleteUser(siswa.ppdb_id)}
+      onClick={() => handleDelete(siswa.ppdb_id)}
       className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl shadow-sm hover:scale-[1.03] transition"
     >
       Hapus

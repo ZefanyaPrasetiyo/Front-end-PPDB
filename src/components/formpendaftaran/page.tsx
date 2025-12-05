@@ -180,7 +180,6 @@ export default function PpdbRegister() {
 
           <div className="grid md:grid-cols-2 gap-6">
             <SimpleFile label="Bukti Cicilan 2" name="cicilan2" />
-            <SimpleFile label="Bukti Cicilan 3" name="cicilan3" />
           </div>
 
           <Button

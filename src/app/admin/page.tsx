@@ -1,27 +1,45 @@
-import type { Metadata } from "next";
-// import { EcommerceMetrics } from "@/components/ecommerce/EcommerceMetrics";
+"use client";
+
 import React from "react";
-import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
-import { AdminLaporan } from "@/components/dashbaordAdmin/page";
+import { StatsCards } from "@/components/dashboard/datappdbcard";
+import { StatistikPendaftar } from "@/components/dashboard/StatistikPendaftar";
+import { PendaftarTerbaru } from "@/components/dashboard/PendaftarTerbaru";
+import DaftarPetugasTU from "@/components/dashboard/dataPetugas";
 
-
-export const metadata: Metadata = {
-  title:
-    "Next.js E-commerce Dashboard | TailAdmin - Next.js Dashboard Template",
-  description: "This is Next.js Home for TailAdmin Dashboard Template",
-};
-
-export default function Ecommerce() {
+export default function PetugasAdmin() {
   return (
-    <div className="grid grid-cols-12 gap-4 md:gap-6">
-      <div className="col-span-12 space-y-6 xl:col-span-7">
-        <AdminLaporan/>
+    <div className="min-h-screen bg-gray-50 p-6 md:p-10">
 
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">Dashboard Petugas</h1>
+        <p className="text-gray-500 mt-1">
+          Pantau perkembangan pendaftar PPDB
+        </p>
       </div>
 
-      <div className="col-span-12 xl:col-span-5">
-        <MonthlyTarget />
+      {/* Row 1 - Stats */}
+      <div className="mb-6">
+        <StatsCards />
       </div>
+
+      {/* Row 2 - Chart */}
+      <div className="mb-6">
+        <StatistikPendaftar />
+      </div>
+
+      {/* Row 3 - Table / Latest */}
+      <div className="mb-6">
+        <PendaftarTerbaru />
+      </div>
+
+       <div className="mb-6">
+        <DaftarPetugasTU />
+      </div>
+
+       <div className="mb-6">
+      </div>
+      
     </div>
   );
 }

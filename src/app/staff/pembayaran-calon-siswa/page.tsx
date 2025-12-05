@@ -30,26 +30,15 @@ const DokumenItem = ({ src, alt }: { src: any; alt: string }) => {
 export default function DokumenPpdb() {
   const { data, loading, error } = useFetchCalonSiswa();
 
-  const dokumenFields = [
-    "ijazah",
-    "akta",
-    "kk",
-    "foto",
-    "rapor",
-    "sk_nilai",
-  ];
-
   const headers = [
-    "ID",
-    "Nama",
-    "Ijazah",
-    "Akta",
-    "KK",
-    "Foto",
-    "Rapor",
-    "Sk Nilai",
-    "Aksi",
-  ];
+  "ID",
+  "Nama",
+  "Email",
+  "Foto",
+  "Bukti Pendaftaran",
+  "Bukti Cicilan",
+  "Aksi",
+];
 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
@@ -88,38 +77,52 @@ export default function DokumenPpdb() {
                 ))}
               </TableRow>
             </TableHeader>
-
+-
             {/* BODY */}
-            <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {data.map((siswa: any) => (
-                <TableRow
-                  key={siswa.id}
-                  className="hover:bg-gray-50 dark:hover:bg-white/5 transition"
-                >
-                  <TableCell className="py-5 px-4 text-gray-700">
-                    {siswa.user_id}
-                  </TableCell>
+           <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
+  {data.map((siswa: any) => (
+    <TableRow
+      key={siswa.id}
+      className="hover:bg-gray-50 dark:hover:bg-white/5 transition"
+    >
+      <TableCell className="py-5 px-4 text-gray-700">
+        {siswa.user_id}
+      </TableCell>
 
-                  <TableCell className="py-5 px-4 font-semibold text-gray-900">
-                    {siswa.nama_user}
-                  </TableCell>
+      <TableCell className="py-5 px-4 font-semibold text-gray-900">
+        {siswa.nama_user}
+      </TableCell>
 
-                  {/* Dokumen */}
-                  {dokumenFields.map((field) => (
-                    <TableCell key={field} className="py-5 px-4">
-                      <DokumenItem src={siswa[field]} alt={field} />
-                    </TableCell>
-                  ))}
+      <TableCell className="py-5 px-4 text-gray-700">
+        {siswa.email_user}
+      </TableCell>
 
-                  {/* Aksi */}
-                  <TableCell className="py-5 px-4">
-                    <Button className="bg-green-600 text-white rounded-xl px-4 py-2 hover:bg-green-700 shadow-sm hover:shadow-md transition">
+      {/* FOTO CALON SISWA */}
+      <TableCell className="py-5 px-4">
+        <DokumenItem src={siswa.foto} alt="foto siswa" />
+      </TableCell>
+
+{/* BUKTI PENDAFTARAN */}
+<TableCell className="py-5 px-4">
+  <DokumenItem src={siswa.bukti_pendaftaran} />
+</TableCell>
+
+{/* BUKTI CICILAN */}
+<TableCell className="py-5 px-4">
+  <DokumenItem src={siswa.bukti_cicilan} />
+</TableCell>
+
+
+      {/* Aksi */}
+      <TableCell className="py-5 px-4">
+       <Button className="bg-green-600 text-white rounded-xl px-4 py-2 hover:bg-green-700 shadow-sm hover:shadow-md transition">
                       Verifikasi
                     </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+      </TableCell>
+
+    </TableRow>
+  ))}
+</TableBody>
 
           </Table>
         )}

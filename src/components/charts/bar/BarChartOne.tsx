@@ -1,110 +1,94 @@
 "use client";
-import React from "react";
 
+import { useEffect, useState } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { BarChart3 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 
-import dynamic from "next/dynamic";
-// Dynamically import the ReactApexChart component
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-export default function BarChartOne() {
+export function StatistikPendaftaran() {
+  const [chartData, setChartData] = useState<number[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/datappdb");
+        const data = await res.json();
+
+        // Inisialisasi array 12 bulan
+        const monthlyCounts = Array(12).fill(0);
+
+        data.forEach((item: any) => {
+          const date = new Date(item.tanggal_daftar);
+          const month = date.getMonth(); // 0-11
+          monthlyCounts[month] += 1;
+        });
+
+        setChartData(monthlyCounts);
+      } catch (err) {
+        console.error("Gagal mengambil data grafik:", err);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   const options: ApexOptions = {
-    colors: ["#465fff"],
+    colors: ["#173E67"],
     chart: {
-      fontFamily: "Outfit, sans-serif",
       type: "bar",
-      height: 180,
-      toolbar: {
-        show: false,
-      },
+      height: 200,
+      toolbar: { show: false },
+      fontFamily: "Outfit, sans-serif",
     },
     plotOptions: {
       bar: {
-        horizontal: false,
-        columnWidth: "39%",
-        borderRadius: 5,
+        columnWidth: "45%",
+        borderRadius: 4,
         borderRadiusApplication: "end",
       },
     },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      show: true,
-      width: 4,
-      colors: ["transparent"],
-    },
+    dataLabels: { enabled: false },
+    stroke: { show: false },
     xaxis: {
       categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+        "Jan","Feb","Mar","Apr","May","Jun",
+        "Jul","Aug","Sep","Oct","Nov","Dec"
       ],
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
+      labels: { rotate: -45, style: { fontSize: "11px" } },
     },
-    legend: {
-      show: true,
-      position: "top",
-      horizontalAlign: "left",
-      fontFamily: "Outfit",
-    },
-    yaxis: {
-      title: {
-        text: undefined,
-      },
-    },
-    grid: {
-      yaxis: {
-        lines: {
-          show: true,
-        },
-      },
-    },
-    fill: {
-      opacity: 1,
-    },
-
-    tooltip: {
-      x: {
-        show: false,
-      },
-      y: {
-        formatter: (val: number) => `${val}`,
-      },
-    },
+    yaxis: { labels: { style: { fontSize: "11px" } } },
+    grid: { strokeDashArray: 3 },
+    tooltip: { y: { formatter: (v) => `${v} pendaftar` } },
   };
+
   const series = [
     {
-      name: "Sales",
-      data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+      name: "Pendaftar",
+      data: chartData, // ← Bukan dummy lagi
     },
   ];
+
   return (
-    <div className="max-w-full overflow-x-auto custom-scrollbar">
-      <div id="chartOne" className="min-w-[1000px]">
+    <Card className="border border-gray-200 shadow rounded-xl shadow-sm">
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-gray-700 text-lg">
+          <BarChart3 size={18} /> Statistik Pendaftar
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent className="px-3">
         <ReactApexChart
           options={options}
           series={series}
           type="bar"
-          height={180}
+          height={200}
         />
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
